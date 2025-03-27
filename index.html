@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Encuesta CSIF Completa</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5fff7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .contenedor {
+            padding: 20px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            color: #1a4d2e;
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .pregunta {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(18, 94, 72, 0.1);
+            border: 1px solid #e1f5e3;
+            width: 100%;
+            min-height: 70vh;
+            display: none;
+        }
+
+        .pregunta.activa {
+            display: block;
+            animation: aparecer 0.4s ease;
+        }
+
+        h3 {
+            color: #245a3e;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .opcion {
+            padding: 18px;
+            background: #f8fff9;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            color: #2a593f;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .opcion:hover, .opcion.seleccionada {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+            transform: scale(1.02);
+        }
+
+        #enviar {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 90%;
+            margin: 20px auto;
+            display: none;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .progreso {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Encuesta COLEBEGA CSIF</h1>
+        <div class="progreso" id="progreso">Pregunta 1 de 9</div>
+
+        <!-- Lista completa de preguntas -->
+        <div class="pregunta activa" data-numero="1">
+            <h3>1. ¿Estás de acuerdo con el trato de tus responsables?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="2">
+            <h3>2. ¿Se respetan tus turnos de trabajo?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="3">
+            <h3>3. ¿Crees que tu trabajo está suficientemente valorado?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="4">
+            <h3>4. ¿Deberían pagarte mejor tu trabajo?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="5">
+            <h3>5. ¿Es objetiva la promoción interna?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="6">
+            <h3>6. ¿Crees que hay igualdad real en la empresa?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="7">
+            <h3>7. ¿Estás afiliado a un sindicato?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="8">
+            <h3>8. ¿Estás satisfecho con tu sindicato?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <div class="pregunta" data-numero="9">
+            <h3>9. ¿Estás dispuesto a valorar afiliarte a otros sindicatos?</h3>
+            <div class="opciones">
+                <div class="opcion" data-respuesta="Sí">Sí</div>
+                <div class="opcion" data-respuesta="No">No</div>
+                <div class="opcion" data-respuesta="NS/NC">NS/NC</div>
+            </div>
+        </div>
+
+        <button id="enviar" onclick="enviarEncuesta()">📤 Enviar Encuesta</button>
+    </div>
+
+    <script>
+        const respuestas = {};
+        let preguntaActual = 1;
+        const totalPreguntas = 9;
+
+        document.querySelectorAll('.opcion').forEach(opcion => {
+            opcion.addEventListener('click', function() {
+                const numeroPregunta = this.closest('.pregunta').dataset.numero;
+                respuestas[`P${numeroPregunta}`] = this.dataset.respuesta;
+                
+                this.classList.add('seleccionada');
+                setTimeout(() => {
+                    mostrarSiguientePregunta();
+                    actualizarProgreso();
+                }, 300);
+            });
+        });
+
+        function mostrarSiguientePregunta() {
+            document.querySelector('.pregunta.activa').classList.remove('activa');
+            preguntaActual++;
+            
+            if(preguntaActual <= totalPreguntas) {
+                document.querySelector(`[data-numero="${preguntaActual}"]`).classList.add('activa');
+            } else {
+                document.getElementById('enviar').style.display = 'block';
+            }
+        }
+
+        function actualizarProgreso() {
+            document.getElementById('progreso').textContent = 
+                `Pregunta ${preguntaActual} de ${totalPreguntas}`;
+        }
+
+        function enviarEncuesta() {
+            const asunto = 'Encuesta CSIF Completa';
+            const cuerpo = `Respuestas de la encuesta:%0A%0A
+                1. Trato responsables: ${respuestas.P1 || '-'}%0A
+                2. Turnos respetados: ${respuestas.P2 || '-'}%0A
+                3. Valoración trabajo: ${respuestas.P3 || '-'}%0A
+                4. Mejor salario: ${respuestas.P4 || '-'}%0A
+                5. Promoción objetiva: ${respuestas.P5 || '-'}%0A
+                6. Igualdad real: ${respuestas.P6 || '-'}%0A
+                7. Afiliación sindical: ${respuestas.P7 || '-'}%0A
+                8. Satisfacción sindicato: ${respuestas.P8 || '-'}%0A
+                9. Valorar otros sindicatos: ${respuestas.P9 || '-'}`;
+
+            window.location.href = `mailto:csifcolebega@gmail.com?subject=${asunto}&body=${cuerpo}`;
+        }
+    </script>
+</body>
+</html>
