@@ -98,6 +98,13 @@
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
 
+        .gracias {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+
         @keyframes aparecer {
             from { opacity: 0; transform: translateX(20px); }
             to { opacity: 1; transform: translateX(0); }
@@ -198,6 +205,8 @@
             </div>
         </div>
 
+        <div id="gracias" class="gracias" style="display:none;">Gracias por tomarte tu tiempo en responder.</div>
+
         <button id="enviar" onclick="enviarEncuesta()">📤 Enviar Encuesta</button>
     </div>
 
@@ -227,6 +236,7 @@
                 document.querySelector(`[data-numero="${preguntaActual}"]`).classList.add('activa');
             } else {
                 document.getElementById('enviar').style.display = 'block';
+                document.getElementById('progreso').style.display = 'none';
             }
         }
 
@@ -235,20 +245,40 @@
                 `Pregunta ${preguntaActual} de ${totalPreguntas}`;
         }
 
-        function enviarEncuesta() {
+        async function enviarEncuesta() {
             const asunto = 'Encuesta CSIF Completa';
-            const cuerpo = `Respuestas de la encuesta:%0A%0A
-                1. Trato responsables: ${respuestas.P1 || '-'}%0A
-                2. Turnos respetados: ${respuestas.P2 || '-'}%0A
-                3. Valoración trabajo: ${respuestas.P3 || '-'}%0A
-                4. Mejor salario: ${respuestas.P4 || '-'}%0A
-                5. Promoción objetiva: ${respuestas.P5 || '-'}%0A
-                6. Igualdad real: ${respuestas.P6 || '-'}%0A
-                7. Afiliación sindical: ${respuestas.P7 || '-'}%0A
-                8. Satisfacción sindicato: ${respuestas.P8 || '-'}%0A
+            const cuerpo = `Respuestas de la encuesta:\n\n
+                1. Trato responsables: ${respuestas.P1 || '-'}\n
+                2. Turnos respetados: ${respuestas.P2 || '-'}\n
+                3. Valoración trabajo: ${respuestas.P3 || '-'}\n
+                4. Mejor salario: ${respuestas.P4 || '-'}\n
+                5. Promoción objetiva: ${respuestas.P5 || '-'}\n
+                6. Igualdad real: ${respuestas.P6 || '-'}\n
+                7. Afiliación sindical: ${respuestas.P7 || '-'}\n
+                8. Satisfacción sindicato: ${respuestas.P8 || '-'}\n
                 9. Valorar otros sindicatos: ${respuestas.P9 || '-'}`;
 
-            window.location.href = `mailto:csifcolebega@gmail.com?subject=${asunto}&body=${cuerpo}`;
+            try {
+                const response = await fetch('https://formspree.io/f/csifcolebega@gmail.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject: asunto,
+                        message: cuerpo
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('enviar').style.display = 'none';
+                    document.getElementById('gracias').style.display = 'block';
+                } else {
+                    alert('Hubo un error al enviar la encuesta. Por favor, inténtalo de nuevo.');
+                }
+            } catch (error) {
+                alert('Hubo un error al enviar la encuesta. Por favor, inténtalo de nuevo.');
+            }
         }
     </script>
 </body>
