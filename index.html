@@ -155,7 +155,7 @@
     <div class="contenedor">
         <h1>Encuesta COLEBEGA CSIF</h1>
         <div class="progreso" id="progreso">Pregunta 1 de 9</div>
-<!-- Lista completa de preguntas -->
+
         <div class="pregunta activa" data-numero="1">
             <h3>1. ¿Estás de acuerdo con el trato de tus responsables?</h3>
             <div class="opciones">
@@ -237,14 +237,13 @@
             </div>
         </div>
 
-
-
-
-        
-
         <div id="gracias" class="gracias" style="display:none;">Gracias por tomarte tu tiempo en responder.</div>
         <div id="error" class="error" style="display:none;">Hubo un problema al enviar la encuesta. Por favor, inténtalo de nuevo.</div>
-        <div id="bloqueado" class="bloqueado" style="display:none;">Ya has completado esta encuesta. Solo se permite una respuesta por dispositivo.</div>
+        <div id="bloqueado" class="bloqueado" style="display:none;">
+            <h3>Encuesta ya completada</h3>
+            <p>Lo sentimos, solo se permite una respuesta por dispositivo/IP.</p>
+            <p>Si crees que esto es un error, por favor contacta con CSIF.</p>
+        </div>
         <div id="loader" class="loader"></div>
 
         <button id="enviar" onclick="enviarEncuesta()">📤 Enviar Encuesta</button>
@@ -298,33 +297,6 @@
             }
         }
 
-        function verificarYGuardarEnvio(ip) {
-            // Obtener datos de envíos previos
-            const enviosPrevios = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            const ahora = Date.now();
-
-            // Limpiar envíos expirados
-            const enviosVigentes = enviosPrevios.filter(envio => 
-                ahora - envio.timestamp < SURVEY_EXPIRATION
-            );
-
-            // Verificar si ya existe un envío para esta IP
-            const ipExistente = enviosVigentes.some(envio => envio.ip === ip);
-            
-            if (ipExistente) {
-                return false;
-            }
-
-            // Guardar nuevo envío
-            enviosVigentes.push({
-                ip: ip,
-                timestamp: ahora
-            });
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(enviosVigentes));
-            return true;
-        }
-
         async function enviarEncuesta() {
             // Validar que todas las preguntas tengan respuesta
             const todasRespondidas = Object.keys(respuestas).length === totalPreguntas;
@@ -342,27 +314,37 @@
                 return;
             }
 
-            // Verificar si ya se ha enviado desde este dispositivo
-            if (!verificarYGuardarEnvio(ip)) {
-                document.getElementById('bloqueado').style.display = 'block';
-                return;
-            }
-
             // Elementos de la interfaz
             const botonEnviar = document.getElementById('enviar');
             const loader = document.getElementById('loader');
             const graciasDiv = document.getElementById('gracias');
             const errorDiv = document.getElementById('error');
+            const bloqueadoDiv = document.getElementById('bloqueado');
+
+            // Verificar si ya se ha enviado desde esta IP
+            const enviosPrevios = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const ahora = Date.now();
+            const enviosVigentes = enviosPrevios.filter(envio => ahora - envio.timestamp < SURVEY_EXPIRATION);
+            const ipExistente = enviosVigentes.some(envio => envio.ip === ip);
+
+            if (ipExistente) {
+                // Mostrar mensaje de bloqueo y salir
+                botonEnviar.style.display = 'none';
+                loader.style.display = 'none';
+                bloqueadoDiv.style.display = 'block';
+                return; // Salir de la función sin enviar
+            }
 
             botonEnviar.disabled = true;
             botonEnviar.style.opacity = '0.5';
             loader.style.display = 'block';
             graciasDiv.style.display = 'none';
             errorDiv.style.display = 'none';
+            bloqueadoDiv.style.display = 'none';
 
             // Preparar datos de la encuesta
             const formData = new FormData();
-            formData.append('IP', ip);  // Añadir IP para trazabilidad
+            formData.append('IP', ip);
             formData.append('Trato responsables', respuestas.P1);
             formData.append('Turnos respetados', respuestas.P2);
             formData.append('Valoración trabajo', respuestas.P3);
@@ -374,7 +356,7 @@
             formData.append('Valorar otros sindicatos', respuestas.P9);
 
             try {
-                // Reemplaza 'YOUR_FORMSPREE_ENDPOINT' con tu endpoint de Formspree
+                // Reemplaza 'YOUR_FORMSPREE_ENDPOINT' con tu endpoint real de Formspree
                 const response = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT', {
                     method: 'POST',
                     body: formData,
@@ -384,16 +366,21 @@
                 });
 
                 if (response.ok) {
-                    // Éxito
+                    // Guardar el envío en localStorage solo si se envió correctamente
+                    enviosVigentes.push({
+                        ip: ip,
+                        timestamp: ahora
+                    });
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(enviosVigentes));
+
+                    // Mostrar mensaje de éxito
                     loader.style.display = 'none';
                     botonEnviar.style.display = 'none';
                     graciasDiv.style.display = 'block';
                 } else {
-                    // Error en la respuesta
                     throw new Error('Error en la respuesta del servidor');
                 }
             } catch (error) {
-                // Error de red o de envío
                 console.error('Error:', error);
                 loader.style.display = 'none';
                 botonEnviar.disabled = false;
